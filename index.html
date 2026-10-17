@@ -124,6 +124,7 @@ input[type=range]::-moz-range-thumb{width:12px;height:12px;border:0;border-radiu
 
 #splash{position:fixed;inset:0;z-index:100;background:radial-gradient(circle at 50% 42%,#0f4a26,#000 70%);display:grid;place-content:center;justify-items:center;gap:26px;transition:opacity .8s,transform .8s}
 #splash.out{opacity:0;transform:scale(1.1);pointer-events:none}
+#splash{animation:spo .5s ease 3.2s forwards}@keyframes spo{to{opacity:0;visibility:hidden;pointer-events:none}}
 .eq{display:flex;gap:5px;align-items:flex-end;height:50px}
 .eq i{width:6px;border-radius:3px;background:var(--g);animation:eq .9s ease-in-out infinite}
 .eq i:nth-child(2n){animation-duration:.7s;animation-delay:-.3s}.eq i:nth-child(3n){animation-duration:1.1s;animation-delay:-.6s}.eq i:nth-child(5n){animation-delay:-.1s}
@@ -223,6 +224,7 @@ button.av{border:0;cursor:pointer}
 <input type="file" id="sin" accept=".srt,.vtt,text/vtt,application/x-subrip" hidden>
 <script>
 const $=i=>document.getElementById(i),M=$('m');
+(()=>{const s=document.getElementById('splash');if(!s)return;document.getElementById('sp').innerHTML=[...'Hudsify'].map((c,i)=>`<span style="animation-delay:${i*.1}s,0s">${c}</span>`).join('');document.getElementById('eq').innerHTML='<i></i>'.repeat(16);setTimeout(()=>s.classList.add('out'),2400);setTimeout(()=>s.remove(),3300)})();
 const P={check:'M9 16.2 4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z',queue:'M3 6h18v2H3zm0 5h18v2H3zm0 5h12v2H3z',x:'M6 5 5 6l6 6-6 6 1 1 6-6 6 6 1-1-6-6 6-6-1-1-6 6z',home:'M12 3 3 10v11h6v-7h6v7h6V10z',search:'M10 2a8 8 0 1 0 4.9 14.3l5.4 5.4 1.4-1.4-5.4-5.4A8 8 0 0 0 10 2zm0 2a6 6 0 1 1 0 12 6 6 0 0 1 0-12z',library:'M4 3h2v18H4zM9 3h2v18H9zm5.5 1.1 1.9-.5 4.6 17-1.9.5z',plus:'M11 4h2v7h7v2h-7v7h-2v-7H4v-2h7z',play:'M7 4v16l13-8z',pause:'M6 4h4v16H6zm8 0h4v16h-4z',prev:'M6 5h2v14H6zm14 0v14L9 12z',next:'M16 5h2v14h-2zM4 5l11 7L4 19z',shuffle:'M10.59 9.17 5.41 4 4 5.41l5.17 5.17 1.42-1.41zM14.5 4l2.04 2.04L4 18.59 5.41 20 17.96 7.46 20 9.5V4h-5.5zm.33 9.41-1.41 1.41 3.13 3.13L14.5 20H20v-5.5l-2.04 2.04-3.13-3.13z',repeat:'M7 7h10v3l4-4-4-4v3H5v6h2zm10 10H7v-3l-4 4 4 4v-3h12v-6h-2z',volume:'M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z',expand:'M7 14l5-5 5 5z',chev:'M7 10l5 5 5-5z',note:'M12 3v10.6A4 4 0 1 0 14 17V7h4V3z',video:'M4 5h12a2 2 0 0 1 2 2v3l4-3v10l-4-3v3a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2z',more:'M5 10a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4z',heart:'M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z'};
 let S={tracks:[],pls:[],q:[],qi:-1,view:'home',f:'all',qs:'',sh:0,rp:0,cc:1},cur=null,url=null,suburl=null,tok=0,sd=0,LS=[],mem={},dcb=null,tt;
 try{const D=JSON.parse(localStorage.getItem('hs')||'{}');S.tracks=D.t||[];S.pls=D.p||[]}catch(e){}
@@ -237,7 +239,9 @@ const fm=s=>{s=isFinite(s)?Math.max(0,s|0):0;return(s/60|0)+':'+String(s%60).pad
 const hue=s=>{let h=0;for(const c of String(s))h=(h*31+c.charCodeAt(0))%360;return h};
 const ic=(n,s)=>`<svg viewBox="0 0 24 24"${s?` style="width:${s}px;height:${s}px"`:''}><path d="${P[n]}"/></svg>`;
 const hrt=`<svg class="hh" viewBox="0 0 24 24"><path d="${P.heart}"/></svg>`;
-const ART={},TC={},ML=(window.Capacitor&&Capacitor.isNativePlatform&&Capacitor.isNativePlatform())?Capacitor.registerPlugin('MediaLibrary'):null;
+const NAT=!!(window.Capacitor&&Capacitor.isNativePlatform&&Capacitor.isNativePlatform());let NP=null;
+try{if(NAT&&(Capacitor.isPluginAvailable?Capacitor.isPluginAvailable('MediaLibrary'):true))NP=Capacitor.registerPlugin('MediaLibrary')}catch(e){}
+const ART={},TC={},ML=NP?new Proxy({},{get:(_,m)=>(...a)=>{try{return Promise.resolve(NP[m](...a))}catch(e){return Promise.reject(e)}}}):null;
 const ak=t=>t.n?'n'+(t.aid||t.id):t.id;
 let aq=[],ab=0,asked={},lastId=-1;
 function pump(){while(ab<3&&aq.length){const[k,u]=aq.shift();ab++;ML.art({uri:u,size:240}).then(r=>{if(r&&r.data){ART[k]=r.data;document.querySelectorAll('.cv[data-k="'+k+'"]').forEach(e=>e.innerHTML='<img src="'+r.data+'" alt="">');if(cur&&ak(cur)==k)tint(cur)}}).catch(()=>{}).finally(()=>{ab--;pump()})}}
@@ -256,7 +260,7 @@ const list=(ts,pid)=>{if(!ts.length)return '<p class="em">Nothing here yet. Use 
 const card=(t,l)=>`<div class="card" data-a="p" data-id="${t.id}" data-l="${l}">${cov(t)}<b>${esc(t.title)}</b><small>${esc(t.artist)}</small><button class="pbtn" tabindex="-1">${ic('play',20)}</button></div>`;
 const hero=(cv,type,name,sub,ids,x)=>{const l=L(ids);return `<div class="hero" style="background:linear-gradient(180deg,hsl(${hue(name)} 45% 32%),var(--p))">${cv}<div><small>${type}</small><h1>${esc(name)}</h1><span>${sub}</span></div></div><div class="act"><button class="pbtn" data-a="pa" data-l="${l}" title="Play">${ic('play',28)}</button><button class="ib" data-a="sa" data-l="${l}" title="Shuffle play">${ic('shuffle',28)}</button>${x||''}</div>`};
 function home(){const hr=new Date().getHours(),g=hr<12?'Good morning':hr<18?'Good afternoon':'Good evening',ts=S.tracks;
- if(!ts.length)return `<div class="pad"><h2 class="big">${g}</h2><div class="empty">${ic('note',48)}<h3>Your library is empty</h3><p>Allow access to the music on your phone, or pick files yourself. For subtitles, select a .srt or .vtt with the same name as the video.</p>${ML?'<button class="pill" data-a="scan">Scan my phone for music</button>':''}<button class="${ML?'chip':'pill'}" data-a="add">Add media</button></div></div>`;
+ if(!ts.length)return `<div class="pad"><h2 class="big">${g}</h2><div class="empty">${ic('note',48)}<h3>Your library is empty</h3><p>Allow access to the music on your phone, or pick files yourself. For subtitles, select a .srt or .vtt with the same name as the video.</p>${NAT?'<button class="pill" data-a="scan">Scan my phone for music</button>':''}<button class="${NAT?'chip':'pill'}" data-a="add">Add media</button></div></div>`;
  const rec=[...ts].reverse(),all=L(rec.map(t=>t.id)),vs=rec.filter(t=>t.v),vl=L(vs.map(t=>t.id));
  const tiles=[`<div class="tile" data-a="nav" data-v="liked">${likedCv()}Liked Songs</div>`,...S.pls.slice(0,3).map(p=>`<div class="tile" data-a="nav" data-v="pl:${p.id}">${cov(p)}${esc(p.name)}</div>`),...rec.slice(0,8).map(t=>`<div class="tile" data-a="p" data-id="${t.id}" data-l="${all}">${cov(t)}${esc(t.title)}</div>`)].slice(0,8).join('');
  return `<div class="pad"><h2 class="big">${g}</h2><div class="tiles">${tiles}</div><h2>Recently added</h2><div class="shelf">${rec.slice(0,20).map(t=>card(t,all)).join('')}</div>${vs.length?`<h2>Videos</h2><div class="shelf">${vs.map(t=>card(t,vl)).join('')}</div>`:''}${S.pls.length?`<h2>Your playlists</h2><div class="shelf">${S.pls.map(p=>`<div class="card" data-a="nav" data-v="pl:${p.id}">${cov(p)}<b>${esc(p.name)}</b><small>${p.ids.length} items</small></div>`).join('')}</div>`:''}</div>`}
@@ -319,7 +323,8 @@ async function add(fs){fs=[...fs];const sub={};for(const f of fs){const m=f.name
 async function scan(auto){if(!ML)return;try{const r=await ML.scan(),old={};S.tracks.filter(t=>t.n).forEach(t=>old[t.id]=t);
  const nt=r.tracks.slice().reverse().map(x=>{const id='n'+x.id,o=old[id]||{};return{id,n:1,uri:x.uri,aid:x.aid,title:x.title||'Unknown',artist:!x.artist||x.artist=='<unknown>'?'Unknown artist':x.artist,v:0,dur:x.dur||0,like:o.like||0,sub:0}});
  S.tracks=S.tracks.filter(t=>!t.n).concat(nt);S.pls.forEach(p=>p.ids=p.ids.filter(i=>T(i)));save();render();ui();try{localStorage.setItem('hsn','1')}catch(e){}
- if(!auto)toast(nt.length?`${nt.length} songs found on your phone`:'No music found on this phone')}catch(e){if(!auto)toast('Allow audio access to scan your music')}}
+ if(!auto)toast(nt.length?`${nt.length} songs found on your phone`:'No music found on this phone')}catch(e){if(!auto)toast(/not implemented|not available/i.test(String(e&&e.message))?'This build is missing the music scanner. Upload MediaLibraryPlugin.java and make_icons.py to GitHub, then rebuild.':'Allow audio access to scan your music')}}
+const scanGo=()=>ML?scan():NAT?toast('This build is missing the music scanner. Upload MediaLibraryPlugin.java and make_icons.py to GitHub, then rebuild.'):pickDir();
 async function dirw(h,o){for await(const[n,e]of h.entries()){if(e.kind=='file')o.push(await e.getFile());else await dirw(e,o)}}
 async function pickDir(){if(!window.showDirectoryPicker)return toast('Folder access works in the Android app or desktop Chrome');try{const h=await showDirectoryPicker(),o=[];await dirw(h,o);add(o)}catch(e){toast('Folder access was blocked here')}}
 async function setSub(f){if(!cur)return;const r=await get(cur.id);if(!r)return;r.sub=f;await put(r);cur.sub=1;save();await attach(f);ui();render();toast('Subtitles added')}
@@ -341,8 +346,8 @@ document.addEventListener('click',e=>{if(!e.target.closest('#menu'))$('menu').hi
  else if(a=='fl'){S.f=d.k;render()}
  else if(a=='dp'){S.pls=S.pls.filter(p=>p.id!=d.id);S.view='lib';save();render()}
  else if(a=='np')openNP(1)
- else if(a=='scan')ML?scan():pickDir()
- else if(a=='set')menu(el,[[ML?'Scan device music':'Choose a music folder',()=>ML?scan():pickDir()],['Add media files',()=>$('fin').click()],['Cover shape: '+(document.body.classList.contains('circ')?'Circle → Square':'Square → Circle'),shape]])
+ else if(a=='scan')scanGo()
+ else if(a=='set')menu(el,[[ML?'Scan device music':NAT?'Scan device music (rebuild needed)':'Choose a music folder',scanGo],['Add media files',()=>$('fin').click()],['Cover shape: '+(document.body.classList.contains('circ')?'Circle → Square':'Square → Circle'),shape]])
  else if(a=='npm'&&cur){const t=cur;menu(el,[['Add to playlist',()=>menu(el,[...S.pls.map(p=>[p.name,()=>{if(!p.ids.includes(t.id))p.ids.push(t.id);save();render();toast('Added to '+p.name)}]),['+ New playlist',()=>newPl(t.id)]])],['Cover shape: '+(document.body.classList.contains('circ')?'Circle → Square':'Square → Circle' ),shape]])}
  else if(a=='qu'){$('ql').innerHTML=S.q.map(i=>T(i)).filter(Boolean).map(t=>`<div class="li${cur&&cur.id==t.id?' on':''}" data-a="p" data-id="${t.id}" data-l="-1">${cov(t,'s48')}<div><b>${esc(t.title)}</b><small>${esc(t.artist)}</small></div></div>`).join('')||'<p class="em">The queue is empty</p>';$('qs').hidden=false}
  else if(a=='qx')$('qs').hidden=true
@@ -423,6 +428,5 @@ const shape=()=>{const c=document.body.classList.toggle('circ');try{localStorage
 try{if(localStorage.getItem('hsc')=='1')document.body.classList.add('circ')}catch(e){}
 tx('readonly',s=>s.getAll(IDBKeyRange.bound('art:','art:\uffff'))).then(a=>{(a||[]).forEach(r=>ART[r.id.slice(4)]=r.data);render();ui()}).catch(()=>{});
 if(ML)ML.status().then(s=>{if(s.granted)scan(1)}).catch(()=>{});
-const SPL=$('splash');$('sp').innerHTML=[...'Hudsify'].map((c,i)=>`<span style="animation-delay:${i*.1}s,0s">${c}</span>`).join('');$('eq').innerHTML='<i></i>'.repeat(16);
-setTimeout(()=>SPL.classList.add('out'),2400);setTimeout(()=>SPL.remove(),3300);
+
 </script></body></html>
