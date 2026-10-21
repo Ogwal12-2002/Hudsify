@@ -428,6 +428,7 @@ public class MediaLibraryPlugin extends Plugin {
         String album = call.getString("album", "");
         String art = call.getString("art", "");
         boolean playing = Boolean.TRUE.equals(call.getBoolean("playing", false));
+        boolean lock = !Boolean.FALSE.equals(call.getBoolean("lock", true));
         long pos = call.getDouble("pos", 0.0).longValue();
         long dur = call.getDouble("dur", 0.0).longValue();
         Bitmap bmp = null;
@@ -439,7 +440,7 @@ public class MediaLibraryPlugin extends Plugin {
                 bmp = null;
             }
         }
-        MediaService.update(getContext(), title, artist, album, bmp, playing, pos, dur);
+        MediaService.update(getContext(), title, artist, album, bmp, playing, pos, dur, lock);
         call.resolve();
     }
 
@@ -479,9 +480,10 @@ public class MediaService extends Service {
     static boolean sPlaying;
     static long sPos;
     static long sDur;
+    static boolean sLock = true;
     private MediaSession session;
 
-    static void update(Context c, String title, String artist, String album, Bitmap art, boolean playing, long pos, long dur) {
+    static void update(Context c, String title, String artist, String album, Bitmap art, boolean playing, long pos, long dur, boolean lock) {
         sTitle = title == null ? "" : title;
         sArtist = artist == null ? "" : artist;
         sAlbum = album == null ? "" : album;
@@ -489,6 +491,7 @@ public class MediaService extends Service {
         sPlaying = playing;
         sPos = pos;
         sDur = dur;
+        sLock = lock;
         if (inst != null) {
             inst.refresh();
             return;
@@ -613,7 +616,7 @@ public class MediaService extends Service {
         b.setSmallIcon(small)
             .setContentTitle(sTitle)
             .setContentText(sArtist)
-            .setVisibility(Notification.VISIBILITY_PUBLIC)
+            .setVisibility(sLock ? Notification.VISIBILITY_PUBLIC : Notification.VISIBILITY_PRIVATE)
             .setOnlyAlertOnce(true)
             .setOngoing(sPlaying)
             .setShowWhen(false)
